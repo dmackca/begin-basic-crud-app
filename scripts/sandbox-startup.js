@@ -13,6 +13,43 @@ async function startUpScript() {
        text: 'say HELLO'
      }
    ]
-  await data.set(greetings)
+  await data.set(greetings);
+
+  const subscriptions = [
+    {
+        filter: 'Hotel Instantane',
+        latestSeason: 2,
+        latestEpisode: 5,
+    },
+    {
+        filter: 'Saturday Morning with James Martin',
+        latestSeason: 0,
+        latestEpisode: 0,
+    },
+    {
+        filter: 'Some show that wont be matched',
+        latestSeason: 2,
+        latestEpisode: 1,
+    },
+    {
+        filter: 'Pit Bulls and Parolees',
+        latestSeason: 0,
+        latestEpisode: 0,
+    },
+    {
+        filter: 'Corn Pone Wisdom',
+        latestSeason: 0,
+        latestEpisode: 0,
+    },
+  ];
+
+    await data.set(subscriptions.map(e => {
+      return {
+        table: 'subscriptions',
+        // key: e.filter,
+        ...e,
+      };
+    }));
+
 }
 module.exports = startUpScript

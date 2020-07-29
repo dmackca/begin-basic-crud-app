@@ -1,0 +1,7 @@
+{
+  "name": "begin-app-get-foo",
+  "dependencies": {
+    "@begin/data": "^1.2.3",
+    "rss-parser": "^3.9.0"
+  }
+}
