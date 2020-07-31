@@ -54,7 +54,7 @@ exports.handler = async function http (req) {
           // if (!i.title.includes('1080p')) return;
 
           // check if this item matches a filter
-          const subscription = subscriptions.find(({ filter }) => i.title.startsWith(filter)); // later use regex
+          const subscription = subscriptions.find(({ filter }) => i.title.match(filter)); 
 
           // skip if it doesn't match any subscription
           if (!subscription) return;

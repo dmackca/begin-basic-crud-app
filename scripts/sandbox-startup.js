@@ -17,27 +17,27 @@ async function startUpScript() {
 
   const subscriptions = [
     {
-        filter: 'Hotel Instantane',
+        filter: '^Hotel.Instantane.+1080p',
         latestSeason: 2,
         latestEpisode: 5,
     },
     {
-        filter: 'Saturday Morning with James Martin',
+        filter: 'Saturday Morning with James Martin.+1080p',
         latestSeason: 0,
         latestEpisode: 0,
     },
     {
-        filter: 'Some show that wont be matched',
+        filter: 'Some show that wont be matched.+1080p',
         latestSeason: 2,
         latestEpisode: 1,
     },
     {
-        filter: 'Pit Bulls and Parolees',
+        filter: 'Pit Bulls and Parolees.+1080p',
         latestSeason: 0,
         latestEpisode: 0,
     },
     {
-        filter: 'Corn Pone Wisdom',
+        filter: 'Corn Pone Wisdom.+1080p',
         latestSeason: 0,
         latestEpisode: 0,
     },
