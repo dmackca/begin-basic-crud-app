@@ -2,10 +2,8 @@
 begin-app
 
 @http
-get  /todos
-post /todos
-post /todos/delete
 get  /foo
+get  /s33d
 
 @tables
 data
