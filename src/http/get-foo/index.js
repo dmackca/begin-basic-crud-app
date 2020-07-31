@@ -21,16 +21,14 @@ function getBestCandidate(currentBest, newCandidate) {
   if (!currentBest) {
     return newCandidate;
   }
-  // later, do some comparisons to favor WEB/AMZN, etc
-  return currentBest; // always return false for now (always use the first match)
+  // @TODO: do some comparisons to favor WEB/AMZN, etc
+  return currentBest; // always use the first match for now
 }
 
 exports.handler = async function http (req) {
       const feedUrl = req.queryStringParameters.feed;
-
       const parser = new Parser();
-
-      const feed = await parser.parseURL(feedUrl);
+      const inputFeed = await parser.parseURL(feedUrl);
 
       const subscriptionData = await data.get({
         table: 'subscriptions'
@@ -47,14 +45,10 @@ exports.handler = async function http (req) {
       });
 
 
-      // filter (regex, really)
-      feed.items.forEach((i) => {
-          // preliminary global quality filter
-          // (temporary, later we'll just match regex for both)
-          // if (!i.title.includes('1080p')) return;
-
+      // filter
+      inputFeed.items.forEach((i) => {
           // check if this item matches a filter
-          const subscription = subscriptions.find(({ filter }) => i.title.match(filter)); 
+          const subscription = subscriptions.find(({ filter }) => i.title.match(filter));
 
           // skip if it doesn't match any subscription
           if (!subscription) return;
@@ -66,8 +60,8 @@ exports.handler = async function http (req) {
           if (parsed === null) return;
           const { season, episode } = parsed;
 
-          // -- discard any that aren't new (do this in the loop above)
-          // later, allow for PROPER and (REPACK?) whatever other smart ep filters do
+          // discard episodes that aren't new
+          // @TODO: allow for PROPER and (REPACK?) whatever other smart ep filters do
           if (season < subscription.startSeason) {
             return;
           } else if (season === subscription.startSeason) {
@@ -75,7 +69,7 @@ exports.handler = async function http (req) {
           } // else: newer season, or newer episode of same season
 
           console.log('Matched item:', i.title);
-          // -- add new ones to a Map
+          // add episode to a Map
           const id = `s${season}e${episode}`;
           const currentCandidate = subscription.matches.get(id);
           const bestCandidate = getBestCandidate(currentCandidate, i);
@@ -114,14 +108,14 @@ exports.handler = async function http (req) {
       console.log('updateData', updateData);
 
       // generate xml from matches
-      const feedOutput = new RSS({
+      const outputFeed = new RSS({
         title: 'Filtered Episodes',
       });
 
       matched.forEach(subscription => {
         const { matches } = subscription;
         matches.forEach(episode => {
-          feedOutput.item({
+          outputFeed.item({
             title: episode.title,
             description: episode.content,
             url: episode.link,
@@ -130,7 +124,7 @@ exports.handler = async function http (req) {
         });
       });
 
-      const xml = feedOutput.xml({indent: ' '});
+      const xml = outputFeed.xml({indent: ' '});
 
   return {
     headers: {
