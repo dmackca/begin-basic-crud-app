@@ -3,12 +3,17 @@
   "version": "0.0.0",
   "description": "Begin basic CRUD app",
   "scripts": {
+    "lint": "eslint .",
     "start": "cross-env NODE_ENV=testing run-s sandbox",
     "sandbox": "npx sandbox"
   },
   "devDependencies": {
     "@architect/sandbox": "latest",
-    "cross-env": "^7.0.2"
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-foundryspatial": "^2.1.2",
+    "eslint-plugin-import": "^2.22.0"
   },
   "dependencies": {
     "@begin/data": "^1.2.3",
