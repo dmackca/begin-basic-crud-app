@@ -68,7 +68,7 @@ exports.handler = async function http(req) {
             if (episode <= subscription.startEpisode) return;
         } // else: newer season, or newer episode of same season
 
-        console.log('Matched item:', i.title);
+        console.log('Matched item:', i.title); // eslint-disable-line
         // add episode to a Map
         const id = `s${season}e${episode}`;
         const currentCandidate = subscription.matches.get(id);
@@ -107,7 +107,7 @@ exports.handler = async function http(req) {
         data.set(updateData);
     }
 
-    console.log('updateData', updateData);
+    console.log('updateData', updateData); // eslint-disable-line
 
     // generate xml from matches
     const outputFeed = new RSS({
