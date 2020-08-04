@@ -1,7 +1,7 @@
 const data = require('@begin/data');
 
 // learn more about HTTP functions here: https://arc.codes/primitives/http
-exports.handler = async function http(req) {
+exports.handler = async function http() {
     // seed db with subscriptions
     const subscriptions = [
         {
