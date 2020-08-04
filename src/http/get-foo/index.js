@@ -48,7 +48,10 @@ exports.handler = async function http (req) {
       // filter
       inputFeed.items.forEach((i) => {
           // check if this item matches a filter
-          const subscription = subscriptions.find(({ filter }) => i.title.match(filter));
+          const subscription = subscriptions.find(({ filter }) => {
+            const regex = new RegExp(filter, 'i');
+            return regex.test(i.title);
+          });
 
           // skip if it doesn't match any subscription
           if (!subscription) return;
