@@ -6,7 +6,7 @@ console.log(new Date(), '*** delete endpoint! ***', '\n\n');
 
 // learn more about HTTP functions here: https://arc.codes/primitives/http
 exports.handler = async function http(req) {
-    if (!req.queryStringParameters.table) return false;
+    if (!(req.queryStringParameters && req.queryStringParameters.table)) return false;
 
     if (!req.queryStringParameters.key) {
         const allData = await data.get({
