@@ -7,7 +7,7 @@ exports.handler = async function http() {
         {
             filter: '^Perry.Mason.+1080p',
             latestSeason: 1,
-            latestEpisode: 7,
+            latestEpisode: 8,
         },
         {
             filter: '^12.oz.Mouse.+1080p',
@@ -48,6 +48,11 @@ exports.handler = async function http() {
             filter: '^Snowpiercer.+1080p',
             latestSeason: 1,
             latestEpisode: 10,
+        },
+        {
+            filter: '^Lovecraft.Country.+1080p',
+            latestSeason: 0,
+            latestEpisode: 0,
         },
     ];
 
