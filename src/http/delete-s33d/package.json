@@ -1,0 +1,6 @@
+{
+  "name": "begin-app-delete-s33d",
+  "dependencies": {
+    "@begin/data": "^1.2.3"
+  }
+}
