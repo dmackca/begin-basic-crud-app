@@ -15,12 +15,23 @@ function parseEpisodeNumber(title) {
     };
 }
 
+// returns true if the episode title is a PROPER or a REPACK
+function isProper(title) {
+    return title.includes('PROPER') || title.includes('REPACK');
+}
+
 // compare candidates: return the better of the 2
 function getBestCandidate(currentBest, newCandidate) {
     // if there is no current best, this new one automatically wins
     if (!currentBest) {
         return newCandidate;
     }
+
+    // favor the new candidate if it's a PROPER
+    if (isProper(newCandidate.title)) {
+        return newCandidate;
+    }
+
     // @TODO: do some comparisons to favor WEB/AMZN, etc
     return currentBest; // always use the first match for now
 }
@@ -60,13 +71,15 @@ exports.handler = async function http(req) {
         if (parsed === null) return;
         const { season, episode } = parsed;
 
-        // discard episodes that aren't new
-        // @TODO: allow for PROPER and (REPACK?) whatever other smart ep filters do
-        if (season < subscription.startSeason) {
-            return;
-        } if (season === subscription.startSeason) {
-            if (episode <= subscription.startEpisode) return;
-        } // else: newer season, or newer episode of same season
+        // discard episodes that aren't new or PROPER/REPACK
+        if (!isProper(i.title)) {
+            if (season < subscription.startSeason) {
+                return;
+            }
+            if (season === subscription.startSeason) {
+                if (episode <= subscription.startEpisode) return;
+            } // else: newer season, or newer episode of same season
+        }
 
         console.log('Matched item:', i.title); // eslint-disable-line
         // add episode to a Map
