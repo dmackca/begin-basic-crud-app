@@ -6,51 +6,61 @@ exports.handler = async function http() {
     const subscriptions = [
         {
             filter: '^Perry.Mason.+1080p',
+            key: 'Perry.Mason',
             latestSeason: 1,
             latestEpisode: 8,
         },
         {
             filter: '^12.oz.Mouse.+1080p',
+            key: '12.oz.Mouse',
             latestSeason: 3,
             latestEpisode: 1,
         },
         {
             filter: '^Better.Call.Saul.+1080p',
+            key: 'Better.Call.Saul',
             latestSeason: 5,
             latestEpisode: 10,
         },
         {
             filter: '^Its.Always.Sunny.in.Philadelphia.+1080p',
+            key: 'Its.Always.Sunny.in.Philadelphia',
             latestSeason: 14,
             latestEpisode: 10,
         },
         {
             filter: '^Kidding.+1080p',
+            key: 'Kidding',
             latestSeason: 2,
             latestEpisode: 10,
         },
         {
             filter: '^on.becoming.a.god.in.central.florida.+1080p',
+            key: 'on.becoming.a.god.in.central.florida',
             latestSeason: 1,
             latestEpisode: 10,
         },
         {
             filter: '^Genndy.Tartakovskys.Primal.+1080p',
+            key: 'Genndy.Tartakovskys.Primal',
             latestSeason: 1,
             latestEpisode: 6,
         },
         {
             filter: '^Rick.+Morty.+1080p',
+            key: 'Rick.Morty',
             latestSeason: 4,
             latestEpisode: 10,
         },
         {
             filter: '^Snowpiercer.+1080p',
+            key: 'Snowpiercer',
             latestSeason: 1,
             latestEpisode: 10,
         },
         {
             filter: '^Lovecraft.Country.+1080p',
+            key: 'Lovecraft.Country',
             latestSeason: 0,
             latestEpisode: 0,
         },
