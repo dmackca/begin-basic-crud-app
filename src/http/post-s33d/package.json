@@ -1,5 +1,5 @@
 {
-  "name": "begin-app-get-s33d",
+  "name": "begin-app-post-s33d",
   "dependencies": {
     "@begin/data": "^1.2.3"
   }
