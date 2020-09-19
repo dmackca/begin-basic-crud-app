@@ -61,8 +61,14 @@ exports.handler = async function http() {
         {
             filter: '^Lovecraft.Country.+1080p',
             key: 'Lovecraft.Country',
-            latestSeason: 0,
-            latestEpisode: 0,
+            latestSeason: 1,
+            latestEpisode: 5,
+        },
+        {
+            filter: '^Archer.2009.+1080p',
+            key: 'Archer',
+            latestSeason: 10,
+            latestEpisode: 9,
         },
     ];
 
