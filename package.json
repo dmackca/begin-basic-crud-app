@@ -1,7 +1,7 @@
 {
   "name": "begin-app",
   "version": "0.0.0",
-  "description": "Begin basic CRUD app",
+  "description": "Smart episode filter for TV schedules",
   "scripts": {
     "lint": "eslint .",
     "start": "cross-env NODE_ENV=testing run-s sandbox",
