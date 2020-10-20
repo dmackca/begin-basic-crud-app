@@ -11,12 +11,6 @@ exports.handler = async function http() {
             latestEpisode: 8,
         },
         {
-            filter: '^12.oz.Mouse.+1080p',
-            key: '12.oz.Mouse',
-            latestSeason: 3,
-            latestEpisode: 1,
-        },
-        {
             filter: '^Better.Call.Saul.+1080p',
             key: 'Better.Call.Saul',
             latestSeason: 5,
@@ -41,7 +35,7 @@ exports.handler = async function http() {
             latestEpisode: 10,
         },
         {
-            filter: '^Genndy.Tartakovskys.Primal.+1080p',
+            filter: '^(Genndy.Tartakovskys.)?Primal.S\d{2}.+1080p',
             key: 'Genndy.Tartakovskys.Primal',
             latestSeason: 1,
             latestEpisode: 6,
@@ -62,13 +56,13 @@ exports.handler = async function http() {
             filter: '^Lovecraft.Country.+1080p',
             key: 'Lovecraft.Country',
             latestSeason: 1,
-            latestEpisode: 5,
+            latestEpisode: 10,
         },
         {
             filter: '^Archer.2009.+1080p',
             key: 'Archer',
-            latestSeason: 10,
-            latestEpisode: 9,
+            latestSeason: 11,
+            latestEpisode: 6,
         },
     ];
 
