@@ -35,7 +35,7 @@ exports.handler = async function http() {
             latestEpisode: 10,
         },
         {
-            filter: '^(Genndy.Tartakovskys.)?Primal.S\d{2}.+1080p',
+            filter: '^(Genndy.Tartakovskys.)?Primal.S[0-9]{2}.+1080p',
             key: 'Genndy.Tartakovskys.Primal',
             latestSeason: 1,
             latestEpisode: 6,
