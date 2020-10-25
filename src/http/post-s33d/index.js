@@ -38,7 +38,7 @@ exports.handler = async function http() {
             filter: '^(Genndy.Tartakovskys.)?Primal.S[0-9]{2}.+1080p',
             key: 'Genndy.Tartakovskys.Primal',
             latestSeason: 1,
-            latestEpisode: 6,
+            latestEpisode: 8,
         },
         {
             filter: '^Rick.+Morty.+1080p',
