@@ -73,8 +73,8 @@ exports.handler = async function http() {
         {
             filter: '^How.To.with.John.Wilson.+1080p',
             key: 'How.To.with.John.Wilson',
-            latestSeason: 11,
-            latestEpisode: 6,
+            latestSeason: 1,
+            latestEpisode: 1,
         },
     ];
 
