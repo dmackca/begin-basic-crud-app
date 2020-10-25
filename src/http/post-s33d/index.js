@@ -70,6 +70,12 @@ exports.handler = async function http() {
             latestSeason: 2,
             latestEpisode: 14,
         },
+        {
+            filter: '^How.To.with.John.Wilson.+1080p',
+            key: 'How.To.with.John.Wilson',
+            latestSeason: 11,
+            latestEpisode: 6,
+        },
     ];
 
     await data.set(subscriptions.map((e) => ({
