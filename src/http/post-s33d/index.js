@@ -64,6 +64,12 @@ exports.handler = async function http() {
             latestSeason: 11,
             latestEpisode: 7,
         },
+        {
+            filter: '^Dream.Corp.LLC.+1080p',
+            key: 'DreamCorp',
+            latestSeason: 2,
+            latestEpisode: 14,
+        },
     ];
 
     await data.set(subscriptions.map((e) => ({
