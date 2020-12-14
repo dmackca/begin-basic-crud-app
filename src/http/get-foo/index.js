@@ -1,9 +1,9 @@
-const data = require('@begin/data');
-const Parser = require('rss-parser');
-const RSS = require('rss');
+const beginData = require('@begin/data');
+const RssParser = require('rss-parser');
+const RssFeed = require('rss');
 
 // parse typical S00E00 episode codes
-function parseEpisodeNumber(title) {
+function parseEpisodeCode(title) {
     const parsed = title.match(/S?(\d{1,2})E(\d{1,2})/i);
     if (parsed === null) {
         return null;
@@ -18,7 +18,7 @@ function parseEpisodeNumber(title) {
 
 // parse AB-style "Episode 00" episode codes where the season isn't counted
 // returns 0 for season number so comparison logic will still work
-function parseEpisodeNumberAB(title) {
+function parseEpisodeCodeAB(title) {
     const parsed = title.match(/Episode.(\d+)/i);
     if (parsed === null) {
         return null;
@@ -54,19 +54,22 @@ function getBestCandidate(currentBest, newCandidate) {
 
 exports.handler = async function http(req) {
     const feedUrl = req.queryStringParameters.feed;
-    const parser = new Parser();
-    const inputFeed = await parser.parseURL(feedUrl);
+    const rssParser = new RssParser();
+    const inputFeed = await rssParser.parseURL(feedUrl);
 
-    let subscriptionData = await data.get({
+    // get all subscriptions from db
+    let subscriptionData = await beginData.get({
         table: 'subscriptions',
     });
 
     // optionally use a specific subset of subscriptions for this feed
+    // with the `subscriptionSet` query parameter
+    // matches the subscription's "feed" field in the database
     // default: `undefined` (all subscriptions with no "feed" value specified)
     const { subscriptionSet } = req.queryStringParameters;
     subscriptionData = subscriptionData.filter((s) => s.feed === subscriptionSet);
 
-    // get details from the db and build this array programatically
+    // add local season, episode, & candidates items to each subscription for comparison
     const subscriptions = subscriptionData.map((s) => ({
         ...s,
         startSeason: s.latestSeason,
@@ -76,7 +79,7 @@ exports.handler = async function http(req) {
 
     // check each item in the input feed against the subscriptions
     inputFeed.items.forEach((i) => {
-        // check if this item matches a filter
+        // check if this item matches a subscription's regex filter
         const subscription = subscriptions.find(({ filter }) => {
             const regex = new RegExp(filter, 'i');
             return regex.test(i.title);
@@ -85,17 +88,15 @@ exports.handler = async function http(req) {
         // skip if it doesn't match any subscription
         if (!subscription) return;
 
-        // if it matches, parse episode code and add to "candidates" map
-
-        // now parse each episode's season and episode number
-        let episodeParser = parseEpisodeNumber;
+        // if it matches, parse season/episode numbers and add to "candidates" map
+        let episodeParser = parseEpisodeCode;
         // optionally use custom episode number parser
         if (req.queryStringParameters.episodeParser === 'AB') {
-            episodeParser = parseEpisodeNumberAB;
+            episodeParser = parseEpisodeCodeAB;
         }
-        const parsed = episodeParser(i.title);
-        if (parsed === null) return;
-        const { season, episode } = parsed;
+        const parsedEpisodeCode = episodeParser(i.title);
+        if (parsedEpisodeCode === null) return;
+        const { season, episode } = parsedEpisodeCode;
 
         // discard old episodes that aren't new or PROPER/REPACK
         if (!isProper(i.title)) {
@@ -108,8 +109,10 @@ exports.handler = async function http(req) {
         }
 
         console.log('Matched item:', i.title); // eslint-disable-line no-console
-        // add episode to a Map
+
+        // add episode to a Map with season/episode code as ID
         const id = `s${season}e${episode}`;
+        // if there's already a candidate for this season/episode code, use the "best" one
         const currentCandidate = subscription.matches.get(id);
         const bestCandidate = getBestCandidate(currentCandidate, i);
         subscription.matches.set(id, bestCandidate);
@@ -126,10 +129,8 @@ exports.handler = async function http(req) {
     });
 
     // filter to only subscriptions with matches
-    const matched = subscriptions.filter((s) => s.matches.size > 0);
-
-    // persist updated seasons/episodes to db
-    const updateData = matched.map((s) => {
+    const subscriptionsWithMatches = subscriptions.filter((s) => s.matches.size > 0);
+    const updateData = subscriptionsWithMatches.map((s) => {
         const {
             table,
             key,
@@ -150,18 +151,19 @@ exports.handler = async function http(req) {
         };
     });
 
+    // persist updated seasons/episodes to db
     if (updateData.length) {
-        data.set(updateData);
+        beginData.set(updateData);
     }
 
     console.log('updateData', updateData); // eslint-disable-line no-console
 
     // generate xml from matches
-    const outputFeed = new RSS({
+    const outputFeed = new RssFeed({
         title: 'Filtered Episodes',
     });
 
-    matched.forEach((subscription) => {
+    subscriptionsWithMatches.forEach((subscription) => {
         const { matches } = subscription;
         matches.forEach((episode) => {
             outputFeed.item({
