@@ -80,7 +80,7 @@ exports.handler = async function http(req) {
         // skip if it doesn't match any subscription
         if (!subscription) return;
 
-        // if it matches, parse episode code and add to candidates
+        // if it matches, parse episode code and add to "candidates" map
 
         // now parse each episode's season and episode number
         let episodeParser = parseEpisodeNumber;
