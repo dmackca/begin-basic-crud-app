@@ -2,6 +2,7 @@ const data = require('@begin/data');
 const Parser = require('rss-parser');
 const RSS = require('rss');
 
+// parse typical S00E00 episode codes
 function parseEpisodeNumber(title) {
     const parsed = title.match(/S?(\d{1,2})E(\d{1,2})/i);
     if (parsed === null) {
@@ -9,6 +10,21 @@ function parseEpisodeNumber(title) {
     }
     const season = Number(parsed[1]);
     const episode = Number(parsed[2]);
+    return {
+        season,
+        episode,
+    };
+}
+
+// parse AB-style "Episode 00" episode codes where the season isn't counted
+// returns 0 for season number so comparison logic will still work
+function parseEpisodeNumberAB(title) {
+    const parsed = title.match(/Episode.(\d+)/i);
+    if (parsed === null) {
+        return null;
+    }
+    const season = 0;
+    const episode = Number(parsed[1]);
     return {
         season,
         episode,
@@ -66,8 +82,13 @@ exports.handler = async function http(req) {
 
         // if it matches, parse episode code and add to candidates
 
-        // now parse each one's season and episode number
-        const parsed = parseEpisodeNumber(i.title);
+        // now parse each episode's season and episode number
+        let episodeParser = parseEpisodeNumber;
+        // optionally use custom episode number parser
+        if (req.queryStringParameters.episodeParser === 'AB') {
+            episodeParser = parseEpisodeNumberAB;
+        }
+        const parsed = episodeParser(i.title);
         if (parsed === null) return;
         const { season, episode } = parsed;
 
