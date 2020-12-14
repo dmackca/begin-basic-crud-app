@@ -130,33 +130,33 @@ exports.handler = async function http(req) {
 
     // filter to only subscriptions with matches
     const subscriptionsWithMatches = subscriptions.filter((s) => s.matches.size > 0);
-    const updateData = subscriptionsWithMatches.map((s) => {
-        const {
-            table,
-            key,
-
-            feed,
-            filter,
-            latestSeason,
-            latestEpisode,
-        } = s;
-        return {
-            table,
-            key,
-
-            feed,
-            filter,
-            latestSeason,
-            latestEpisode,
-        };
-    });
 
     // persist updated seasons/episodes to db
-    if (updateData.length) {
-        beginData.set(updateData);
-    }
+    if (subscriptionsWithMatches.length) {
+        const updateData = subscriptionsWithMatches.map((s) => {
+            const {
+                table,
+                key,
+    
+                feed,
+                filter,
+                latestSeason,
+                latestEpisode,
+            } = s;
+            return {
+                table,
+                key,
+    
+                feed,
+                filter,
+                latestSeason,
+                latestEpisode,
+            };
+        });
 
-    console.log('updateData', updateData); // eslint-disable-line no-console
+        beginData.set(updateData);
+        console.log('updateData', updateData); // eslint-disable-line no-console
+    }
 
     // generate xml from matches
     const outputFeed = new RssFeed({
