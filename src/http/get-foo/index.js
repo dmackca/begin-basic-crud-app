@@ -137,7 +137,7 @@ exports.handler = async function http(req) {
             const {
                 table,
                 key,
-    
+
                 feed,
                 filter,
                 latestSeason,
@@ -146,7 +146,7 @@ exports.handler = async function http(req) {
             return {
                 table,
                 key,
-    
+
                 feed,
                 filter,
                 latestSeason,
