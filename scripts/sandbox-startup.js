@@ -24,7 +24,7 @@ async function startUpScript() {
             latestEpisode: 5,
         },
         {
-            filter: '^Attack.on.Titan.+1080p',
+            filter: 'Attack.on.Titan.+1080p.+DameDesuYo',
             key: 'Attack.on.Titan',
             feed: 'AB',
             latestSeason: 0,

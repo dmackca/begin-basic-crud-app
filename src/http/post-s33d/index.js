@@ -77,7 +77,7 @@ exports.handler = async function http() {
             latestEpisode: 6,
         },
         {
-            filter: '^Attack.on.Titan.+1080p',
+            filter: 'Attack.on.Titan.+1080p.+DameDesuYo',
             key: 'Attack on Titan',
             feed: 'AB', // only use on "AB" feed
             latestSeason: 0,
