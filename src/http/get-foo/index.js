@@ -64,7 +64,7 @@ exports.handler = async function http(req) {
     // optionally use a specific subset of subscriptions for this feed
     // default: `undefined` (all subscriptions with no "feed" value specified)
     const { subscriptionSet } = req.queryStringParameters;
-    subscriptionData = subscriptionData.filter(s => s.feed === subscriptionSet);
+    subscriptionData = subscriptionData.filter((s) => s.feed === subscriptionSet);
 
     // get details from the db and build this array programatically
     const subscriptions = subscriptionData.map((s) => ({
@@ -131,15 +131,22 @@ exports.handler = async function http(req) {
     // persist updated seasons/episodes to db
     const updateData = matched.map((s) => {
         const {
-            table, key, latestSeason, latestEpisode, filter, feed
+            table,
+            key,
+
+            feed,
+            filter,
+            latestSeason,
+            latestEpisode,
         } = s;
         return {
             table,
             key,
+
+            feed,
             filter,
             latestSeason,
             latestEpisode,
-            feed,
         };
     });
 
