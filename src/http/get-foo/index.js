@@ -53,7 +53,7 @@ exports.handler = async function http(req) {
         matches: new Map(),
     }));
 
-    // filter
+    // check each item in the input feed against the subscriptions
     inputFeed.items.forEach((i) => {
         // check if this item matches a filter
         const subscription = subscriptions.find(({ filter }) => {
@@ -71,7 +71,7 @@ exports.handler = async function http(req) {
         if (parsed === null) return;
         const { season, episode } = parsed;
 
-        // discard episodes that aren't new or PROPER/REPACK
+        // discard old episodes that aren't new or PROPER/REPACK
         if (!isProper(i.title)) {
             if (season < subscription.startSeason) {
                 return;
@@ -81,7 +81,7 @@ exports.handler = async function http(req) {
             } // else: newer season, or newer episode of same season
         }
 
-        console.log('Matched item:', i.title); // eslint-disable-line
+        console.log('Matched item:', i.title); // eslint-disable-line no-console
         // add episode to a Map
         const id = `s${season}e${episode}`;
         const currentCandidate = subscription.matches.get(id);
@@ -120,7 +120,7 @@ exports.handler = async function http(req) {
         data.set(updateData);
     }
 
-    console.log('updateData', updateData); // eslint-disable-line
+    console.log('updateData', updateData); // eslint-disable-line no-console
 
     // generate xml from matches
     const outputFeed = new RSS({
