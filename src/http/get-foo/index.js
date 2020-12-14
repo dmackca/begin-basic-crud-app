@@ -2,6 +2,7 @@ const data = require('@begin/data');
 const Parser = require('rss-parser');
 const RSS = require('rss');
 
+// parse typical S00E00 episode codes
 function parseEpisodeNumber(title) {
     const parsed = title.match(/S?(\d{1,2})E(\d{1,2})/i);
     if (parsed === null) {
@@ -9,6 +10,21 @@ function parseEpisodeNumber(title) {
     }
     const season = Number(parsed[1]);
     const episode = Number(parsed[2]);
+    return {
+        season,
+        episode,
+    };
+}
+
+// parse AB-style "Episode 00" episode codes where the season isn't counted
+// returns 0 for season number so comparison logic will still work
+function parseEpisodeNumberAB(title) {
+    const parsed = title.match(/Episode.(\d+)/i);
+    if (parsed === null) {
+        return null;
+    }
+    const season = 0;
+    const episode = Number(parsed[1]);
     return {
         season,
         episode,
@@ -41,9 +57,14 @@ exports.handler = async function http(req) {
     const parser = new Parser();
     const inputFeed = await parser.parseURL(feedUrl);
 
-    const subscriptionData = await data.get({
+    let subscriptionData = await data.get({
         table: 'subscriptions',
     });
+
+    // optionally use a specific subset of subscriptions for this feed
+    // default: `undefined` (all subscriptions with no "feed" value specified)
+    const { subscriptionSet } = req.queryStringParameters;
+    subscriptionData = subscriptionData.filter((s) => s.feed === subscriptionSet);
 
     // get details from the db and build this array programatically
     const subscriptions = subscriptionData.map((s) => ({
@@ -53,7 +74,7 @@ exports.handler = async function http(req) {
         matches: new Map(),
     }));
 
-    // filter
+    // check each item in the input feed against the subscriptions
     inputFeed.items.forEach((i) => {
         // check if this item matches a filter
         const subscription = subscriptions.find(({ filter }) => {
@@ -64,14 +85,19 @@ exports.handler = async function http(req) {
         // skip if it doesn't match any subscription
         if (!subscription) return;
 
-        // if it matches, parse episode code and add to candidates
+        // if it matches, parse episode code and add to "candidates" map
 
-        // now parse each one's season and episode number
-        const parsed = parseEpisodeNumber(i.title);
+        // now parse each episode's season and episode number
+        let episodeParser = parseEpisodeNumber;
+        // optionally use custom episode number parser
+        if (req.queryStringParameters.episodeParser === 'AB') {
+            episodeParser = parseEpisodeNumberAB;
+        }
+        const parsed = episodeParser(i.title);
         if (parsed === null) return;
         const { season, episode } = parsed;
 
-        // discard episodes that aren't new or PROPER/REPACK
+        // discard old episodes that aren't new or PROPER/REPACK
         if (!isProper(i.title)) {
             if (season < subscription.startSeason) {
                 return;
@@ -81,7 +107,7 @@ exports.handler = async function http(req) {
             } // else: newer season, or newer episode of same season
         }
 
-        console.log('Matched item:', i.title); // eslint-disable-line
+        console.log('Matched item:', i.title); // eslint-disable-line no-console
         // add episode to a Map
         const id = `s${season}e${episode}`;
         const currentCandidate = subscription.matches.get(id);
@@ -105,11 +131,19 @@ exports.handler = async function http(req) {
     // persist updated seasons/episodes to db
     const updateData = matched.map((s) => {
         const {
-            table, key, latestSeason, latestEpisode, filter,
+            table,
+            key,
+
+            feed,
+            filter,
+            latestSeason,
+            latestEpisode,
         } = s;
         return {
             table,
             key,
+
+            feed,
             filter,
             latestSeason,
             latestEpisode,
@@ -120,7 +154,7 @@ exports.handler = async function http(req) {
         data.set(updateData);
     }
 
-    console.log('updateData', updateData); // eslint-disable-line
+    console.log('updateData', updateData); // eslint-disable-line no-console
 
     // generate xml from matches
     const outputFeed = new RSS({
