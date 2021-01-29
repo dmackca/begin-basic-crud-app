@@ -80,6 +80,7 @@ exports.handler = async function http(req) {
     }));
 
     console.log('Subscription "%s" (%d subscriptions)', subscriptionSet, subscriptions.length);
+    console.log('subscriptions: ', subscriptions);
 
     // check each item in the input feed against the subscriptions
     inputFeed.items.forEach((i) => {
