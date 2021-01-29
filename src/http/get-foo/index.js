@@ -62,6 +62,8 @@ exports.handler = async function http(req) {
         table: 'subscriptions',
     });
 
+    console.log('Checking %s (%d items)...', feedUrl, inputFeed.items.length);
+
     // optionally use a specific subset of subscriptions for this feed
     // with the `subscriptionSet` query parameter
     // matches the subscription's "feed" field in the database
@@ -76,6 +78,8 @@ exports.handler = async function http(req) {
         startEpisode: s.latestEpisode,
         matches: new Map(),
     }));
+
+    console.log('Subscription "%s" (%d subscriptions)', subscriptionSet, subscriptions.length);
 
     // check each item in the input feed against the subscriptions
     inputFeed.items.forEach((i) => {
@@ -108,7 +112,7 @@ exports.handler = async function http(req) {
             } // else: newer season, or newer episode of same season
         }
 
-        console.log('Matched item:', i.title); // eslint-disable-line no-console
+        console.log('Matched item:', i.title);
 
         // add episode to a Map with season/episode code as ID
         const id = `s${season}e${episode}`;
@@ -130,6 +134,8 @@ exports.handler = async function http(req) {
 
     // filter to only subscriptions with matches
     const subscriptionsWithMatches = subscriptions.filter((s) => s.matches.size > 0);
+
+    console.log('Found %d new episodes', subscriptionsWithMatches.length);
 
     // persist updated seasons/episodes to db
     if (subscriptionsWithMatches.length) {
@@ -155,7 +161,7 @@ exports.handler = async function http(req) {
         });
 
         beginData.set(updateData);
-        console.log('updateData', updateData); // eslint-disable-line no-console
+        console.log('Updated:', updateData);
     }
 
     // generate xml from matches
