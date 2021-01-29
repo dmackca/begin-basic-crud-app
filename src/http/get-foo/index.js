@@ -64,6 +64,8 @@ exports.handler = async function http(req) {
 
     console.log('Checking %s (%d items)...', feedUrl, inputFeed.items.length);
 
+    console.log('subscriptionData:', subscriptionData);
+
     // optionally use a specific subset of subscriptions for this feed
     // with the `subscriptionSet` query parameter
     // matches the subscription's "feed" field in the database
