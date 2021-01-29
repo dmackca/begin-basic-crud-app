@@ -90,6 +90,8 @@ exports.handler = async function http(req) {
             return regex.test(i.title);
         });
 
+        console.log('test match', i.title, subscription);
+
         // skip if it doesn't match any subscription
         if (!subscription) return;
 
