@@ -52,15 +52,36 @@ function getBestCandidate(currentBest, newCandidate) {
     return currentBest; // always use the first match for now
 }
 
+// fetch all subscriptions, querying again if a pagination cursor is found
+async function getSubscriptionData() {
+    const subscriptionData = [];
+
+    let cursor;
+    do {
+        // eslint-disable-next-line no-await-in-loop
+        const results = await beginData.get({
+            table: 'subscriptions',
+            limit: 25,
+            cursor,
+        });
+
+        // append results
+        subscriptionData.push(...results);
+
+        // keep going if there's a cursor for more results
+        cursor = results.cursor;
+    } while (cursor);
+
+    return subscriptionData;
+}
+
 exports.handler = async function http(req) {
     const feedUrl = req.queryStringParameters.feed;
     const rssParser = new RssParser();
     const inputFeed = await rssParser.parseURL(feedUrl);
 
     // get all subscriptions from db
-    let subscriptionData = await beginData.get({
-        table: 'subscriptions',
-    });
+    let subscriptionData = await getSubscriptionData();
 
     console.log('Checking %s (%d items)...', feedUrl, inputFeed.items.length);
 
