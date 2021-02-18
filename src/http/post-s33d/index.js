@@ -81,13 +81,19 @@ exports.handler = async function http() {
             key: 'Attack on Titan',
             feed: 'AB', // only use on "AB" feed
             latestSeason: 0,
-            latestEpisode: 65,
+            latestEpisode: 69,
         },
         {
             filter: '^Search.Party.+1080p',
             key: 'Search Party',
             latestSeason: 4,
-            latestEpisode: 6,
+            latestEpisode: 10,
+        },
+        {
+            filter: '^Painting.with.John.+1080p',
+            key: 'Painting with John',
+            latestSeason: 1,
+            latestEpisode: 4,
         },
     ];
 
